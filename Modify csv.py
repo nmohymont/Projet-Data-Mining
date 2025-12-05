@@ -4,6 +4,7 @@ import numpy as np
 df = pd.read_csv('Road Accident Data.csv')
 
 print(df.columns.tolist())
+print(f'Taille initiale du dataset : {df.shape[0]} lignes, {df.shape[1]} colonnes')
 
 #~ prend la négation ceux qui ne respecte pas le format HH:MM
 #isna() retourne True pour les valeurs non convertibles en datetime
@@ -94,6 +95,7 @@ df.loc[df['Number_of_Vehicles'] >treshold_number_vehicle, "Number_of_Vehicles"] 
 #print(df['Number_of_Vehicles'].unique(), df['Number_of_Vehicles'].count())
 
 df = df[~df["Speed_limit"].isin([10, 15])] #~ df["Speed_limit"].isin([10, 15]) ou ~ prend la négation de la sélection des lignes ou la valeur vaut 10 ou 15
+print(f'Taille  dataset après retrait des speed_limit 10 et 15: {df.shape[0]} lignes, {df.shape[1]} colonnes')
 
 
 #créer des valeurs ordinales numériques pour réussir à faire des corrélations de Spearman et Kendall
