@@ -1,6 +1,9 @@
 import pandas as pd 
+import numpy as np
 
 df = pd.read_csv('Road Accident Data.csv')
+
+print(df.columns.tolist())
 
 #~ prend la négation ceux qui ne respecte pas le format HH:MM
 #isna() retourne True pour les valeurs non convertibles en datetime
@@ -79,6 +82,19 @@ def test_calcul_boxplot():
     print(df['Latitude'].min(),df['Latitude'].max())
 
 # regroupement des valeurs aberrantes dans des catégories NaN aussi Autre 
+
+treshold_casualties = 7
+
+df.loc[df['Number_of_Casualties'] >treshold_casualties, "Number_of_Casualties"] = treshold_casualties
+
+print(df['Number_of_Casualties'].unique(),  df['Number_of_Casualties'].count() ) #vérification des valeurs enregistrées et compter le nombre de rows 
+
+treshold_number_vehicle = 6
+df.loc[df['Number_of_Vehicles'] >treshold_number_vehicle, "Number_of_Vehicles"] = treshold_number_vehicle
+#print(df['Number_of_Vehicles'].unique(), df['Number_of_Vehicles'].count())
+
+df = df[~df["Speed_limit"].isin([10, 15])] #~ df["Speed_limit"].isin([10, 15]) ou ~ prend la négation de la sélection des lignes ou la valeur vaut 10 ou 15
+
 
 #créer des valeurs ordinales numériques pour réussir à faire des corrélations de Spearman et Kendall
 numeric_mask ={
