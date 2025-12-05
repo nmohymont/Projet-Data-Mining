@@ -41,8 +41,8 @@ print(df[['Time','Time_cat','Num_Time']].head())
 
 #calcul de boxlpots a titre indicatif
 
-def calcul_boxplot():
-    
+def test_calcul_boxplot():
+
     Q1_casualties = df['Number_of_Casualties'].quantile(0.25)
     Q3_casualties = df['Number_of_Casualties'].quantile(0.75)
     IQR_casualties = Q3_casualties - Q1_casualties
@@ -78,7 +78,10 @@ def calcul_boxplot():
 
 # regroupement des valeurs aberrantes dans des catégories NaN aussi Autre 
 
-#créer indice accident severity
+
+
+#créer des valeurs ordinales numériques pour réussir à faire des corrélations de Spearman et Kendall
+
 numeric_mask ={
     'Slight' :1.0,
     'Serious' :2.0,
