@@ -42,9 +42,7 @@ print(df[['Time','Time_cat','Num_Time']].head())
 #calcul de boxlpots a titre indicatif
 
 def calcul_boxplot():
-
-
-
+    
     Q1_casualties = df['Number_of_Casualties'].quantile(0.25)
     Q3_casualties = df['Number_of_Casualties'].quantile(0.75)
     IQR_casualties = Q3_casualties - Q1_casualties
