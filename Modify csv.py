@@ -41,7 +41,7 @@ print(df[['Time','Time_cat','Num_Time']].head())
 
 #calcul de boxlpots a titre indicatif
 
-def calcul_boxplot():
+def test_calcul_boxplot():
 
 
 
@@ -80,7 +80,7 @@ def calcul_boxplot():
 
 # regroupement des valeurs aberrantes dans des catégories NaN aussi Autre 
 
-#créer indice accident severity
+#créer des valeurs ordinales numériques pour réussir à faire des corrélations de Spearman et Kendall
 numeric_mask ={
     'Slight' :1.0,
     'Serious' :2.0,
