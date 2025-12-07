@@ -111,7 +111,8 @@ col = "Accident_Severity"
 if col not in df.columns:
     print(f"Attention : la colonne '{col}' n'existe pas dans le CSV.", file=sys.stderr)
 else:
-    df[col] = df[col].map(mapping)
+    # Appliquer le mapping puis caster en entier nullable pour éviter les .0
+    df[col] = df[col].map(mapping).astype("Int64")
 
 
 # --- Light_Conditions ---
@@ -123,8 +124,45 @@ light_mapping = {
     "Darkness - lights unlit": 3,
     "Missing": 4
 }
+# --- Application du mapping ---
+if "Light_Conditions" in df.columns:
+    df["Light_Conditions"] = df["Light_Conditions"].map(light_mapping).astype("Int64")
+else:
+    print("Attention : la colonne 'Light_Conditions' n'existe pas dans le CSV.", file=sys.stderr)
 
-df["Light_Conditions"] = df["Light_Conditions"].map(light_mapping)
+# --- Road_Surface_Conditions ---
+road_surface_mapping = {
+    "Dry": 1,
+    "Wet or damp": 2,
+    "Frost or ice": 5,
+    "Snow": 4,
+    "Flood over 3cm. deep": 3,
+    "Missing": 6
+}
+
+# --- Application du mapping ---
+if "Road_Surface_Conditions" in df.columns:
+    df["Road_Surface_Conditions"] = df["Road_Surface_Conditions"].map(road_surface_mapping).astype("Int64")
+else:
+    print("Attention : la colonne 'Road_Surface_Conditions' n'existe pas dans le CSV.", file=sys.stderr)
+
+
+# --- Time_cat --- 
+
+Time_cat_mapping = {
+    "Daytime": 2,
+    "Night": 3,
+    "Morning": 1,
+    "Missing": 4
+}
+
+# --- Application du mapping ---
+if "Time_cat" in df.columns:
+    df["Time_cat"] = df["Time_cat"].map(Time_cat_mapping).astype("Int64")   
+else:
+    print("Attention : la colonne 'Time_cat' n'existe pas dans le CSV.", file=sys.stderr)
+
+
 
 
 # --- Sauvegarde du nouveau CSV ---
