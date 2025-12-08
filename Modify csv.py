@@ -17,7 +17,7 @@ invalid_time_mask = ~pd.to_datetime(df['Time'], format='%H:%M', errors='coerce')
 #print(df['Police_Force'].unique ())
 
 df_mapping_region = df_mapping_region.dropna(subset=["Region"])
-print(df_mapping_region.head(5))
+#print(df_mapping_region.head(5))
 
 paires = list(zip(df_mapping_region['\nList of police forces of the United Kingdom'], df_mapping_region['Region']))
 mapping_police_force = dict(paires)
@@ -124,4 +124,4 @@ numeric_mask ={
 df['severity_numeric'] = df['Accident_Severity'].replace(numeric_mask)
 
 #print(df[['severity_numeric','Accident_Severity']].head(5))
-#df.to_csv('Append_Time_cat_Road_Accident_Data.csv', index=False)
+df.to_csv('2.Append_Region_Road_Accident_Data.csv', index=False)
