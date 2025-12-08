@@ -4,7 +4,7 @@ import numpy as np
 df = pd.read_csv('Road Accident Data.csv')
 df_mapping_region = pd.read_csv('correspondance region et police_force.csv', sep =';')
 
-print(df.columns.tolist())
+#print(df.columns.tolist())
 print(f'Taille initiale du dataset : {df.shape[0]} lignes, {df.shape[1]} colonnes')
 
 #~ prend la négation ceux qui ne respecte pas le format HH:MM
@@ -59,7 +59,7 @@ df = df[new_order]
 
 #df.to_csv('Append_Time_cat_Road_Accident_Data.csv', index=False)
 
-#calcul de boxlpots a titre indicatif
+####calcul de boxlpots a titre indicatif
 
 def test_calcul_boxplot():
 
@@ -98,15 +98,16 @@ def test_calcul_boxplot():
     #print(lower_bound_latitude,Q1_latitude, Q3_latitude, upper_bound_latitude)
     #print(df['Latitude'].min(),df['Latitude'].max())
 
-# regroupement des valeurs aberrantes dans des catégories NaN aussi Autre 
+### regroupement des valeurs aberrantes dans des catégories NaN aussi Autre 
 
-treshold_casualties = 7
+treshold_casualties = 7 #seuil equivalent à minimum 0.1%
 
 df.loc[df['Number_of_Casualties'] >treshold_casualties, "Number_of_Casualties"] = treshold_casualties
 
-print(df['Number_of_Casualties'].unique(),  df['Number_of_Casualties'].count() ) #vérification des valeurs enregistrées et compter le nombre de rows 
+#print(df['Number_of_Casualties'].unique(),  df['Number_of_Casualties'].count() ) #vérification des valeurs enregistrées et compter le nombre de rows 
 
-treshold_number_vehicle = 6
+treshold_number_vehicle = 6 #seuil equivalent à minimum 0.1%
+
 df.loc[df['Number_of_Vehicles'] >treshold_number_vehicle, "Number_of_Vehicles"] = treshold_number_vehicle
 #print(df['Number_of_Vehicles'].unique(), df['Number_of_Vehicles'].count())
 
@@ -114,7 +115,21 @@ df = df[~df["Speed_limit"].isin([10, 15])] #~ df["Speed_limit"].isin([10, 15]) o
 print(f'Taille  dataset après retrait des speed_limit 10 et 15: {df.shape[0]} lignes, {df.shape[1]} colonnes')
 
 
-#créer des valeurs ordinales numériques pour réussir à faire des corrélations de Spearman et Kendall
+###modification attributs Data missing or out of range vers Not a junction or within 20 metres
+
+#print('Avant changement')
+#print(df["Junction_Control"].unique())#check attributs de junction_control
+
+junction_control_mask={
+    'Data missing or out of range' : 'Not at junction or within 20 metres'
+} 
+
+df['Junction_Control'] = df['Junction_Control'].replace(junction_control_mask)
+
+#print('Après changement')
+#print(df["Junction_Control"].unique())
+
+###créer des valeurs ordinales numériques pour réussir à faire des corrélations de Spearman et Kendall
 numeric_mask ={
     'Slight' :1.0,
     'Serious' :2.0,
@@ -124,4 +139,4 @@ numeric_mask ={
 df['severity_numeric'] = df['Accident_Severity'].replace(numeric_mask)
 
 #print(df[['severity_numeric','Accident_Severity']].head(5))
-df.to_csv('2.Append_Region_Road_Accident_Data.csv', index=False)
+#df.to_csv('2.Append_Region_Road_Accident_Data.csv', index=False)
