@@ -117,8 +117,8 @@ print(f'Taille  dataset après retrait des speed_limit 10 et 15: {df.shape[0]} l
 
 ###modification attributs Data missing or out of range vers Not a junction or within 20 metres
 
-print('Avant changement')
-print(df["Junction_Control"].unique())#check attributs de junction_control
+#print('Avant changement')
+#print(df["Junction_Control"].unique())#check attributs de junction_control
 
 junction_control_mask={
     'Data missing or out of range' : 'Not at junction or within 20 metres'
@@ -126,8 +126,27 @@ junction_control_mask={
 
 df['Junction_Control'] = df['Junction_Control'].replace(junction_control_mask)
 
-print('Après changement')
-print(df["Junction_Control"].unique())
+#print('Après changement')
+#print(df["Junction_Control"].unique())
+
+###modifier attributs vehicle types l'idée est de remplacer toutes les catégories ayant une fréquence inférieur à 1% dans une classe Autre
+
+#print('Avant changement')
+#print(df["Vehicle_Type"].unique())#check attributs de junction_control
+
+vehicle_mask ={ #seuil équivalent au fréquence inférieur à 1%
+    'Goods over 3.5t. and under 7.5t' : 'Other',
+    'Other vehicle' : 'Other',
+    'Minibus (8 - 16 passenger seats)' : 'Other',
+    'Agricultural vehicle' : 'Other',
+    'Pedal cycle' : 'Other',
+    'Ridden horse' :'Other'
+}
+
+df['Vehicle_Type'] = df['Vehicle_Type'].replace(vehicle_mask)
+
+#print('Après changement')
+#print(df["Vehicle_Type"].unique()) #vérification bonne
 
 ###créer des valeurs ordinales numériques pour réussir à faire des corrélations de Spearman et Kendall
 numeric_mask ={
