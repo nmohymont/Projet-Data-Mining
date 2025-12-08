@@ -117,8 +117,8 @@ print(f'Taille  dataset après retrait des speed_limit 10 et 15: {df.shape[0]} l
 
 ###modification attributs Data missing or out of range vers Not a junction or within 20 metres
 
-#print('Avant changement')
-#print(df["Junction_Control"].unique())#check attributs de junction_control
+print('Avant changement')
+print(df["Junction_Control"].unique())#check attributs de junction_control
 
 junction_control_mask={
     'Data missing or out of range' : 'Not at junction or within 20 metres'
@@ -126,8 +126,8 @@ junction_control_mask={
 
 df['Junction_Control'] = df['Junction_Control'].replace(junction_control_mask)
 
-#print('Après changement')
-#print(df["Junction_Control"].unique())
+print('Après changement')
+print(df["Junction_Control"].unique())
 
 ###créer des valeurs ordinales numériques pour réussir à faire des corrélations de Spearman et Kendall
 numeric_mask ={
@@ -139,4 +139,4 @@ numeric_mask ={
 df['severity_numeric'] = df['Accident_Severity'].replace(numeric_mask)
 
 #print(df[['severity_numeric','Accident_Severity']].head(5))
-#df.to_csv('2.Append_Region_Road_Accident_Data.csv', index=False)
+df.to_csv('2.Append_Region_Road_Accident_Data.csv', index=False)
