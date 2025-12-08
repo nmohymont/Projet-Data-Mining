@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 
 df = pd.read_csv('Road Accident Data.csv')
+df_mapping_region = pd.read_csv('correspondance region et police_force.csv', sep =';')
 
 print(df.columns.tolist())
 print(f'Taille initiale du dataset : {df.shape[0]} lignes, {df.shape[1]} colonnes')
@@ -10,6 +11,21 @@ print(f'Taille initiale du dataset : {df.shape[0]} lignes, {df.shape[1]} colonne
 #isna() retourne True pour les valeurs non convertibles en datetime
 invalid_time_mask = ~pd.to_datetime(df['Time'], format='%H:%M', errors='coerce').isna()
 #print(df[invalid_time_mask]) # rien n'est affiché, toutes les valeurs sont valides
+
+#print(df_mapping_region.head(5))
+#print(df_mapping_region.columns)
+#print(df['Police_Force'].unique ())
+
+df_mapping_region = df_mapping_region.dropna(subset=["Region"])
+print(df_mapping_region.head(5))
+
+paires = list(zip(df_mapping_region['\nList of police forces of the United Kingdom'], df_mapping_region['Region']))
+mapping_police_force = dict(paires)
+
+df['Region'] = df['Police_Force'].map(mapping_police_force)
+
+#print(df[["Police_Force", "Region"]]) #check result
+#print(df[df["Region"].isna()]) #check the NaN values but it matches exaclty the inital missing value
 
 def duration_to_numeric(duration):
     try:
@@ -39,7 +55,7 @@ new_order = cols[:time_index + 1] + ['Num_Time'] + ['Time_cat'] + cols[time_inde
 df = df[new_order]
 
 #   Vérifier les colonnes supplémentaires
-print(df[['Time','Time_cat','Num_Time']].head())
+#print(df[['Time','Time_cat','Num_Time']].head())
 
 #df.to_csv('Append_Time_cat_Road_Accident_Data.csv', index=False)
 
@@ -79,8 +95,8 @@ def test_calcul_boxplot():
     upper_bound_latitude = Q3_latitude + x* IQR_latitude
     lower_bound_latitude = Q1_latitude - x* IQR_latitude 
 
-    print(lower_bound_latitude,Q1_latitude, Q3_latitude, upper_bound_latitude)
-    print(df['Latitude'].min(),df['Latitude'].max())
+    #print(lower_bound_latitude,Q1_latitude, Q3_latitude, upper_bound_latitude)
+    #print(df['Latitude'].min(),df['Latitude'].max())
 
 # regroupement des valeurs aberrantes dans des catégories NaN aussi Autre 
 
@@ -107,5 +123,5 @@ numeric_mask ={
 
 df['severity_numeric'] = df['Accident_Severity'].replace(numeric_mask)
 
-print(df[['severity_numeric','Accident_Severity']].head(5))
-df.to_csv('Append_Time_cat_Road_Accident_Data.csv', index=False)
+#print(df[['severity_numeric','Accident_Severity']].head(5))
+#df.to_csv('Append_Time_cat_Road_Accident_Data.csv', index=False)
