@@ -1,6 +1,11 @@
 # Projet-Data-Mining
 
+To use this code, we just need to have the file 'Road Accident Data.csv' and 'correspondance region et police_force.csv'.
 
-For the "Antoine" branch, I imported my python code allowing to convert ordinal values into quantitative valeus. For this, you simply need to download the python code "Modification_CSV.py" and put in the same directory the csv folder "Road Accident Data.csv".
+When launching the code, a 'Append_Time_cat_Road_Accident_Data.csv' file will be created with the changes.
 
-N.B. The CSV file used is the one with Nicolas' modifications. That is to say, a new column "Time_Cat" has been added next to the column "Time" in order to classify the hours of the day into categories.
+The modifications are as follows:
+- Sort modalities of certain variables (elimination of exceptional values abérantes)
+- Transformations of ordinal variables into numerical variables (creation of new columns for them)
+- Creation of new categories (EX: the hour and classified according to the time of day morning/afternoon/evening) 
+- Box plot creation for information purposes 
