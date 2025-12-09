@@ -37,7 +37,7 @@ df = df[new_order]
 #   Vérifier les colonnes supplémentaires
 print(df[['Time','Time_cat','Num_Time']].head())
 
-#df.to_csv('Append_Time_cat_Road_Accident_Data.csv', index=False)
+df.to_csv('Append_Time_cat_Road_Accident_Data.csv', index=False)
 
 #calcul de boxlpots a titre indicatif
 
@@ -91,4 +91,4 @@ numeric_mask ={
 df['severity_numeric'] = df['Accident_Severity'].replace(numeric_mask)
 
 print(df[['severity_numeric','Accident_Severity']].head(5))
-df.to_csv('Append_Time_cat_Road_Accident_Data.csv', index=False)
+#df.to_csv('Append_Time_cat_Road_Accident_Data.csv', index=False)
