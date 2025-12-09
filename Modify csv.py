@@ -1,5 +1,7 @@
 import pandas as pd 
 import numpy as np
+import sys
+
 
 df = pd.read_csv('Road Accident Data.csv')
 df_mapping_region = pd.read_csv('correspondance region et police_force.csv', sep =';')
@@ -57,7 +59,113 @@ df = df[new_order]
 #   Vérifier les colonnes supplémentaires
 #print(df[['Time','Time_cat','Num_Time']].head())
 
-df.to_csv('Append_Time_cat_Road_Accident_Data.csv', index=False)
+#df.to_csv('Append_Time_cat_Road_Accident_Data.csv', index=False)
+
+
+
+#------------------------------------------------------------
+#Rajout partie Antoine 
+
+
+# --- Accident_Severity ---
+mapping = {
+    "Slight": 1,
+    "Serious": 2,
+    "Fatal": 3,
+    #"Missing": 4
+}
+
+# --- Application du mapping (avec sécurité si colonne manquante) ---
+col = "Accident_Severity"
+if col not in df.columns:
+    print(f"Attention : la colonne '{col}' n'existe pas dans le CSV.", file=sys.stderr)
+else:
+    # Créer une nouvelle colonne avec le suffixe _numeric pour éviter de remplacer l'original
+    df[f"{col}_numeric"] = df[col].map(mapping).astype("Int64")
+    # Réorganiser pour placer la colonne numeric juste après l'originale
+    cols = list(df.columns)
+    cols.insert(cols.index(col) + 1, cols.pop(cols.index(f"{col}_numeric")))
+    df = df[cols]
+
+
+# --- Light_Conditions ---
+light_mapping = {
+    "Daylight": 1,
+    "Darkness - lights lit": 2,
+    "Darkness - no lighting": 3,
+    "Darkness - lighting unknown": 3,
+    "Darkness - lights unlit": 3,
+    #"Missing": 4
+}
+# --- Application du mapping ---
+Light = "Light_Conditions"
+if Light not in df.columns:
+    print(f"Attention : la colonne '{Light}' n'existe pas dans le CSV.", file=sys.stderr)
+else:
+    # Créer une nouvelle colonne avec le suffixe _numeric pour éviter de remplacer l'original
+    df[f"{Light}_numeric"] = df[Light].map(light_mapping).astype("Int64")
+    # Réorganiser pour placer la colonne numeric juste après l'originale
+    cols = list(df.columns)
+    cols.insert(cols.index(Light) + 1, cols.pop(cols.index(f"{Light}_numeric")))
+    df = df[cols]
+
+
+# --- Road_Surface_Conditions ---
+road_surface_mapping = {
+    "Dry": 1,
+    "Wet or damp": 2,
+    "Frost or ice": 5,
+    "Snow": 4,
+    "Flood over 3cm. deep": 3,
+    "Missing": 6
+}
+
+# --- Application du mapping ---
+Road = "Road_Surface_Conditions"
+if Road not in df.columns:
+    print(f"Attention : la colonne '{Road}' n'existe pas dans le CSV.", file=sys.stderr)
+else:
+    # Créer une nouvelle colonne avec le suffixe _numeric pour éviter de remplacer l'original
+    df[f"{Road}_numeric"] = df[Road].map(road_surface_mapping).astype("Int64")
+    # Réorganiser pour placer la colonne numeric juste après l'originale
+    cols = list(df.columns)
+    cols.insert(cols.index(Road) + 1, cols.pop(cols.index(f"{Road}_numeric")))
+    df = df[cols]
+    
+
+# --- Time_cat --- 
+
+Time_cat_mapping = {
+    "Daytime": 2,
+    "Night": 3,
+    "Morning": 1,
+    "Missing": 4
+}
+
+# --- Application du mapping ---
+TimeCat = "Time_cat"
+if TimeCat not in df.columns:
+    print(f"Attention : la colonne '{TimeCat}' n'existe pas dans le CSV.", file=sys.stderr)
+else:
+    # Créer une nouvelle colonne avec le suffixe _numeric pour éviter de remplacer l'original
+    df[f"{TimeCat}_numeric"] = df[TimeCat].map(Time_cat_mapping).astype("Int64")
+    # Réorganiser pour placer la colonne numeric juste après l'originale
+    cols = list(df.columns)
+    cols.insert(cols.index(TimeCat) + 1, cols.pop(cols.index(f"{TimeCat}_numeric")))
+    df = df[cols]
+
+
+
+# --- Sauvegarde du nouveau CSV ---
+#df.to_csv(output_csv, index=False)
+#print("")
+#print("")
+#print("Fichier modifié sauvegardé sous :", output_csv)
+
+
+
+
+#------------------------------------------------------------------
 
 ####calcul de boxlpots a titre indicatif
 
@@ -158,4 +266,7 @@ numeric_mask ={
 df['severity_numeric'] = df['Accident_Severity'].replace(numeric_mask)
 
 print(df[['severity_numeric','Accident_Severity']].head(5))
-#df.to_csv('Append_Time_cat_Road_Accident_Data.csv', index=False)
+
+# --- Sauvegarde du CSV final avec toutes les modifications ---
+df.to_csv('Append_Time_cat_Road_Accident_Data.csv', index=False)
+print("\nFichier sauvegardé : Append_Time_cat_Road_Accident_Data.csv")
