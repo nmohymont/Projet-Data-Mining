@@ -266,16 +266,6 @@ df['Vehicle_Type'] = df['Vehicle_Type'].replace(vehicle_mask)
 #print('Après changement')
 #print(df["Vehicle_Type"].unique()) #vérification bonne
 
-###créer des valeurs ordinales numériques pour réussir à faire des corrélations de Spearman et Kendall
-numeric_mask ={
-    'Slight' :1.0,
-    'Serious' :2.0,
-    'Fatal' :3.0
-}
-
-df['severity_numeric'] = df['Accident_Severity'].replace(numeric_mask)
-
-#print(df[['severity_numeric','Accident_Severity']].head(5))
 
 # --- Sauvegarde du CSV final avec toutes les modifications ---
 df.to_csv('Append_Time_cat_Road_Accident_Data.csv', index=False)
