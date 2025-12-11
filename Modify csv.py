@@ -166,6 +166,7 @@ else:
     df = df[cols]
 
 df = df.dropna(subset=[TimeCat])
+print(df[TimeCat].isna().sum())
 
 # --- Sauvegarde du nouveau CSV ---
 #df.to_csv(output_csv, index=False)
@@ -269,5 +270,5 @@ df['Vehicle_Type'] = df['Vehicle_Type'].replace(vehicle_mask)
 
 
 # --- Sauvegarde du CSV final avec toutes les modifications ---
-df.to_csv('Output_Road_Accident_Data.csv', index=False)
+#df.to_csv('Output_Road_Accident_Data.csv', index=False)
 #print("\nFichier sauvegardé : Append_Time_cat_Road_Accident_Data.csv")
