@@ -117,16 +117,15 @@ else:
 
 
 # --- Road_Surface_Conditions ---
-Range_Road_surface = 6
+Range_Road_surface = 5
 
 road_surface_mapping = {
-    "Dry": round(1/Range_Road_surface, 2),               # Deviendra 0.17
-    "Wet or damp": round(2/Range_Road_surface, 2),        # Deviendra 0.33
-    "Snow": round(4/Range_Road_surface, 2),               # Deviendra 0.67
-    "Frost or ice": round(5/Range_Road_surface, 2),          # Deviendra 0.83
-    "Flood over 3cm. deep": round(3/Range_Road_surface, 2),   # Deviendra 0.50
-    "Missing": round(6/Range_Road_surface, 2)               # Deviendra 1.0
-
+    "Dry": round(1/Range_Road_surface, 2),               # Deviendra 0.20
+    "Wet or damp": round(2/Range_Road_surface, 2),        # Deviendra 0.40
+    "Snow": round(4/Range_Road_surface, 2),               # Deviendra 0.80
+    "Frost or ice": round(5/Range_Road_surface, 2),          # Deviendra 1.00
+    "Flood over 3cm. deep": round(3/Range_Road_surface, 2),   # Deviendra 0.60
+    #"Missing": round(6/Range_Road_surface, 2)               # drop les missing = 317 instances
 }
 
 # --- Application du mapping ---
@@ -140,16 +139,18 @@ else:
     cols = list(df.columns)
     cols.insert(cols.index(Road) + 1, cols.pop(cols.index(f"{Road}_numeric")))
     df = df[cols]
-    
+
+df = df.dropna(subset=[Road])
+
 
 # --- Time_cat --- 
-Range_Time_cat = 4
+Range_Time_cat = 3
 
 Time_cat_mapping = {
-    "Daytime": round(2/Range_Time_cat, 2),      # Deviendra 0.50   
-    "Night": round(3/Range_Time_cat, 2),        # Deviendra 0.75
-    "Morning": round(1/Range_Time_cat, 2),      # Deviendra 0.25
-    "Missing": round(4/Range_Time_cat, 2)       # Deviendra 1.0
+    "Daytime": round(2/Range_Time_cat, 2),      # Deviendra 0.66   
+    "Night": round(3/Range_Time_cat, 2),        # Deviendra 1.00
+    "Morning": round(1/Range_Time_cat, 2),      # Deviendra 0.33
+    #"Missing": round(4/Range_Time_cat, 2)       # drop missing = 17 instances
 }
 
 # --- Application du mapping ---
@@ -164,7 +165,7 @@ else:
     cols.insert(cols.index(TimeCat) + 1, cols.pop(cols.index(f"{TimeCat}_numeric")))
     df = df[cols]
 
-
+df = df.dropna(subset=[TimeCat])
 
 # --- Sauvegarde du nouveau CSV ---
 #df.to_csv(output_csv, index=False)
@@ -230,7 +231,7 @@ df.loc[df['Number_of_Vehicles'] >treshold_number_vehicle, "Number_of_Vehicles"] 
 #print(df['Number_of_Vehicles'].unique(), df['Number_of_Vehicles'].count())
 
 df = df[~df["Speed_limit"].isin([10, 15])] #~ df["Speed_limit"].isin([10, 15]) ou ~ prend la négation de la sélection des lignes ou la valeur vaut 10 ou 15
-print(f'Taille  dataset après retrait des speed_limit 10 et 15: {df.shape[0]} lignes, {df.shape[1]} colonnes')
+print(f'Taille  dataset après retrait des speed_limit 10 et 15 et des NA ordinale->numérique: {df.shape[0]} lignes, {df.shape[1]} colonnes')
 
 
 ###modification attributs Data missing or out of range vers Not a junction or within 20 metres
@@ -268,5 +269,5 @@ df['Vehicle_Type'] = df['Vehicle_Type'].replace(vehicle_mask)
 
 
 # --- Sauvegarde du CSV final avec toutes les modifications ---
-df.to_csv('Append_Time_cat_Road_Accident_Data.csv', index=False)
+df.to_csv('Output_Road_Accident_Data.csv', index=False)
 #print("\nFichier sauvegardé : Append_Time_cat_Road_Accident_Data.csv")
