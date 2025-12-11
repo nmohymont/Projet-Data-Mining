@@ -1,5 +1,7 @@
 import pandas as pd 
 import numpy as np
+import sys
+
 
 df = pd.read_csv('Road Accident Data.csv')
 df_mapping_region = pd.read_csv('correspondance region et police_force.csv', sep =';')
@@ -58,6 +60,122 @@ df = df[new_order]
 #print(df[['Time','Time_cat','Num_Time']].head())
 
 #df.to_csv('Append_Time_cat_Road_Accident_Data.csv', index=False)
+
+
+
+#------------------------------------------------------------
+#Rajout partie Antoine 
+
+
+# --- Accident_Severity ---
+Range_acident_severity = 3
+
+mapping = {
+    # round(calcul, 1) arrondit le résultat à 1 chiffre après la virgule
+    "Slight": round(1/Range_acident_severity, 1),   # Deviendra 0.3
+    "Serious": round(2/Range_acident_severity, 1),  # Deviendra 0.7
+    "Fatal": round(3/Range_acident_severity, 1),    # Deviendra 1.0
+    #"Missing": 4
+}
+
+# --- Application du mapping ---
+col = "Accident_Severity"
+if col not in df.columns:
+    print(f"Attention : la colonne '{col}' n'existe pas dans le CSV.", file=sys.stderr)
+else:
+    # Application du mapping
+    df[f"{col}_numeric"] = df[col].map(mapping)
+    
+    # Réorganiser les colonnes
+    cols = list(df.columns)
+    cols.insert(cols.index(col) + 1, cols.pop(cols.index(f"{col}_numeric")))
+    df = df[cols]
+
+
+# --- Light_Conditions ---
+Range_light_conditions = 3
+
+light_mapping = {
+    "Daylight": round(1/Range_light_conditions, 1),          # Deviendra 0.3
+    "Darkness - lights lit": round(2/Range_light_conditions, 1),      # Deviendra 0.7 
+    "Darkness - no lighting": round(3/Range_light_conditions, 1),        # Deviendra 1.0
+    "Darkness - lighting unknown": round(3/Range_light_conditions, 1), # Deviendra 1.0
+    "Darkness - lights unlit": round(3/Range_light_conditions, 1)      # Deviendra 1.0
+    #"Missing": 4
+}
+# --- Application du mapping ---
+Light = "Light_Conditions"
+if Light not in df.columns:
+    print(f"Attention : la colonne '{Light}' n'existe pas dans le CSV.", file=sys.stderr)
+else:
+    # Créer une nouvelle colonne avec le suffixe _numeric pour éviter de remplacer l'original
+    df[f"{Light}_numeric"] = df[Light].map(light_mapping)
+    # Réorganiser pour placer la colonne numeric juste après l'originale
+    cols = list(df.columns)
+    cols.insert(cols.index(Light) + 1, cols.pop(cols.index(f"{Light}_numeric")))
+    df = df[cols]
+
+
+# --- Road_Surface_Conditions ---
+Range_Road_surface = 6
+
+road_surface_mapping = {
+    "Dry": round(1/Range_Road_surface, 2),               # Deviendra 0.17
+    "Wet or damp": round(2/Range_Road_surface, 2),        # Deviendra 0.33
+    "Snow": round(4/Range_Road_surface, 2),               # Deviendra 0.67
+    "Frost or ice": round(5/Range_Road_surface, 2),          # Deviendra 0.83
+    "Flood over 3cm. deep": round(3/Range_Road_surface, 2),   # Deviendra 0.50
+    "Missing": round(6/Range_Road_surface, 2)               # Deviendra 1.0
+
+}
+
+# --- Application du mapping ---
+Road = "Road_Surface_Conditions"
+if Road not in df.columns:
+    print(f"Attention : la colonne '{Road}' n'existe pas dans le CSV.", file=sys.stderr)
+else:
+    # Créer une nouvelle colonne avec le suffixe _numeric pour éviter de remplacer l'original
+    df[f"{Road}_numeric"] = df[Road].map(road_surface_mapping)
+    # Réorganiser pour placer la colonne numeric juste après l'originale
+    cols = list(df.columns)
+    cols.insert(cols.index(Road) + 1, cols.pop(cols.index(f"{Road}_numeric")))
+    df = df[cols]
+    
+
+# --- Time_cat --- 
+Range_Time_cat = 4
+
+Time_cat_mapping = {
+    "Daytime": round(2/Range_Time_cat, 2),      # Deviendra 0.50   
+    "Night": round(3/Range_Time_cat, 2),        # Deviendra 0.75
+    "Morning": round(1/Range_Time_cat, 2),      # Deviendra 0.25
+    "Missing": round(4/Range_Time_cat, 2)       # Deviendra 1.0
+}
+
+# --- Application du mapping ---
+TimeCat = "Time_cat"
+if TimeCat not in df.columns:
+    print(f"Attention : la colonne '{TimeCat}' n'existe pas dans le CSV.", file=sys.stderr)
+else:
+    # Créer une nouvelle colonne avec le suffixe _numeric pour éviter de remplacer l'original
+    df[f"{TimeCat}_numeric"] = df[TimeCat].map(Time_cat_mapping)
+    # Réorganiser pour placer la colonne numeric juste après l'originale
+    cols = list(df.columns)
+    cols.insert(cols.index(TimeCat) + 1, cols.pop(cols.index(f"{TimeCat}_numeric")))
+    df = df[cols]
+
+
+
+# --- Sauvegarde du nouveau CSV ---
+#df.to_csv(output_csv, index=False)
+#print("")
+#print("")
+#print("Fichier modifié sauvegardé sous :", output_csv)
+
+
+
+
+#------------------------------------------------------------------
 
 ####calcul de boxlpots a titre indicatif
 
@@ -129,14 +247,26 @@ df['Junction_Control'] = df['Junction_Control'].replace(junction_control_mask)
 #print('Après changement')
 #print(df["Junction_Control"].unique())
 
-###créer des valeurs ordinales numériques pour réussir à faire des corrélations de Spearman et Kendall
-numeric_mask ={
-    'Slight' :1.0,
-    'Serious' :2.0,
-    'Fatal' :3.0
+###modifier attributs vehicle types l'idée est de remplacer toutes les catégories ayant une fréquence inférieur à 1% dans une classe Autre
+
+#print('Avant changement')
+#print(df["Vehicle_Type"].unique())#check attributs de junction_control
+
+vehicle_mask ={ #seuil équivalent au fréquence inférieur à 1%
+    'Goods over 3.5t. and under 7.5t' : 'Other',
+    'Other vehicle' : 'Other',
+    'Minibus (8 - 16 passenger seats)' : 'Other',
+    'Agricultural vehicle' : 'Other',
+    'Pedal cycle' : 'Other',
+    'Ridden horse' :'Other'
 }
 
-df['severity_numeric'] = df['Accident_Severity'].replace(numeric_mask)
+df['Vehicle_Type'] = df['Vehicle_Type'].replace(vehicle_mask)
 
-#print(df[['severity_numeric','Accident_Severity']].head(5))
-#df.to_csv('2.Append_Region_Road_Accident_Data.csv', index=False)
+#print('Après changement')
+#print(df["Vehicle_Type"].unique()) #vérification bonne
+
+
+# --- Sauvegarde du CSV final avec toutes les modifications ---
+df.to_csv('Append_Time_cat_Road_Accident_Data.csv', index=False)
+#print("\nFichier sauvegardé : Append_Time_cat_Road_Accident_Data.csv")
