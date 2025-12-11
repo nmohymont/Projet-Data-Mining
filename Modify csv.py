@@ -278,3 +278,59 @@ df['Vehicle_Type'] = df['Vehicle_Type'].replace(vehicle_mask)
 # --- Sauvegarde du CSV final avec toutes les modifications ---
 df.to_csv('Output_Road_Accident_Data.csv', index=False)
 #print("\nFichier sauvegardé : Append_Time_cat_Road_Accident_Data.csv")
+
+#----------------------------------------------------------------
+#Création d'un échantillon équilibré à partir du dataset modifié
+
+
+# 1. Chargement des données
+file_path = 'Output_Road_Accident_Data.csv' 
+df = pd.read_csv(file_path)
+
+print(f"Nombre total de lignes chargées : {len(df)}")
+
+# --- NETTOYAGE CIBLÉ ---
+# Liste des colonnes critiques qui ne DOIVENT PAS être vides
+colonnes_critiques = [
+    'Accident_Severity',      # Indispensable pour l'équilibrage
+    'Road_Surface_Conditions', 
+    'Road_Type', 
+    'Time', 
+    'Weather_Conditions'
+]
+
+# On supprime les lignes qui ont un "NaN" (vide) dans l'une de ces colonnes
+df_clean = df.dropna(subset=colonnes_critiques).copy()
+
+lignes_supprimees = len(df) - len(df_clean)
+print(f"Lignes supprimées (données manquantes dans les colonnes critiques) : {lignes_supprimees}")
+print(f"Lignes restantes pour l'échantillonnage : {len(df_clean)}")
+# -----------------------
+
+# 2. Configuration de l'échantillonnage
+nbr_echantillon_fatal = 3000
+target_col = 'Accident_Severity'
+total_target = 3 * nbr_echantillon_fatal 
+unique_classes = df_clean[target_col].nunique() 
+samples_per_class = total_target // unique_classes 
+
+print(f"\nCible par classe : {samples_per_class} enregistrements")
+
+# 3. Échantillonnage équilibré
+# On utilise df_clean (le dataset nettoyé)
+df_sample = df_clean.groupby(target_col, group_keys=False).apply(
+    lambda x: x.sample(n=min(len(x), samples_per_class), random_state=42)
+)
+
+# Mélange final
+df_sample = df_sample.sample(frac=1, random_state=42).reset_index(drop=True)
+
+# 4. Résultats
+print("\n--- Répartition finale ---")
+print(df_sample[target_col].value_counts())
+print(f"Taille totale : {len(df_sample)}")
+
+# 5. Sauvegarde
+output_name = f'sample_balanced_{len(df_sample)}.csv'
+df_sample.to_csv(output_name, index=False)
+print(f"Fichier '{output_name}' généré.")
