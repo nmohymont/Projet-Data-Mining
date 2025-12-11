@@ -66,6 +66,12 @@ df = df[new_order]
 #------------------------------------------------------------
 #Rajout partie Antoine 
 
+#Code permettant de savoir combien de modalité "fatal" est présente dans le dataset
+def test_count_fatal():
+    fatal_count = df['Accident_Severity'].value_counts().get('Fatal', 0)
+    print(f"Nombre d'occurrences de 'Fatal' dans 'Accident_Severity': {fatal_count}")
+
+test_count_fatal()
 
 # --- Accident_Severity ---
 Range_acident_severity = 3
@@ -270,5 +276,5 @@ df['Vehicle_Type'] = df['Vehicle_Type'].replace(vehicle_mask)
 
 
 # --- Sauvegarde du CSV final avec toutes les modifications ---
-#df.to_csv('Output_Road_Accident_Data.csv', index=False)
+df.to_csv('Output_Road_Accident_Data.csv', index=False)
 #print("\nFichier sauvegardé : Append_Time_cat_Road_Accident_Data.csv")
