@@ -180,8 +180,8 @@ print(df[TimeCat].isna().sum())
 #print("")
 #print("Fichier modifié sauvegardé sous :", output_csv)
 
-
-
+df = df.drop(columns=['Carriageway_Hazards'])
+df = df.dropna()
 
 #------------------------------------------------------------------
 
