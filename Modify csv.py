@@ -172,7 +172,6 @@ else:
     df = df[cols]
 
 df = df.dropna(subset=[TimeCat])
-print(df[TimeCat].isna().sum())
 
 # --- Sauvegarde du nouveau CSV ---
 #df.to_csv(output_csv, index=False)
@@ -297,6 +296,7 @@ colonnes_critiques = [
     'Road_Type', 
     'Time', 
     'Weather_Conditions'
+
 ]
 
 # On supprime les lignes qui ont un "NaN" (vide) dans l'une de ces colonnes
@@ -331,6 +331,48 @@ print(df_sample[target_col].value_counts())
 print(f"Taille totale : {len(df_sample)}")
 
 # 5. Sauvegarde
-output_name = f'sample_balanced_{len(df_sample)}.csv'
-df_sample.to_csv(output_name, index=False)
-print(f"Fichier '{output_name}' généré.")
+#Je n'ai pas activé la sauvegarde automatique pour éviter d'écraser des fichiers existants sans confirmation
+
+#output_name = f'sample_balanced_{len(df_sample)}.csv'
+#df_sample.to_csv(output_name, index=False)
+#print(f"Fichier '{output_name}' généré.")
+
+
+
+#----------------------------------------------
+#Création d'un nouveau fichier csv ne contenant pas les valeurs d'échantillonage équilibré de "sample_balanced_9000.csv"
+#Cela sera utile pour l'apprentissage par la suite. 
+import pandas as pd
+
+# 1. Chargement
+df_full = pd.read_csv("Output_road_accident_data.csv")
+df_sample = pd.read_csv("sample_balanced_9000.csv")
+
+print("-------------------------")
+print("Suppression des lignes d'échantillonage équilibré du dataset complet")
+print(f"Total avant : {len(df_full)}")
+print(f"A retirer : {len(df_sample)}")
+
+# 2. La méthode "Merge avec Indicateur"
+# On fusionne les deux tables sur TOUTES les colonnes pour trouver les lignes exactes
+# indicator=True crée une colonne '_merge' qui dit si la ligne est dans 'left_only', 'right_only' ou 'both'
+df_merged = df_full.merge(df_sample, how='left', indicator=True)
+
+# 3. On ne garde que ce qui est "left_only" (présent dans full, mais PAS dans sample)
+df_remaining = df_merged[df_merged['_merge'] == 'left_only']
+
+# On nettoie la colonne temporaire
+df_remaining = df_remaining.drop(columns=['_merge'])
+
+# 4. Vérification
+print(f"Reste : {len(df_remaining)}")
+diff = len(df_full) - len(df_remaining)
+print(f"Lignes supprimées réellement : {diff}")
+
+if diff == len(df_sample):
+    print("Le compte est bon ! Exactement 9000 lignes supprimées.")
+else:
+    print(f"Toujours une différence de {diff - len(df_sample)} lignes. (Peut être dû à des doublons parfaits dans les données brutes)")
+
+# 5. Sauvegarde
+df_remaining.to_csv("Output_road_accident_data_TEST_SET.csv", index=False)
