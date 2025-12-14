@@ -342,7 +342,6 @@ print(f"Taille totale : {len(df_sample)}")
 #----------------------------------------------
 #Création d'un nouveau fichier csv ne contenant pas les valeurs d'échantillonage équilibré de "sample_balanced_9000.csv"
 #Cela sera utile pour l'apprentissage par la suite. 
-import pandas as pd
 
 # 1. Chargement
 df_full = pd.read_csv("Output_road_accident_data.csv")
