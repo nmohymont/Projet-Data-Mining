@@ -2,6 +2,8 @@ import pandas as pd
 import numpy as np
 import sys
 
+# 1 - CHARGEMENT ET ENRICHESSEMENT DU FICHIER
+
 
 df = pd.read_csv('Road Accident Data.csv')
 df_mapping_region = pd.read_csv('correspondance region et police_force.csv', sep =';')
@@ -59,12 +61,19 @@ df = df[new_order]
 #   Vérifier les colonnes supplémentaires
 #print(df[['Time','Time_cat','Num_Time']].head())
 
+'''
+Ce que contient 'Append_Time_cat_Road_Accident_Data.csv':
+- REGION : Correspondance avec  Police force
+- NUM_TIME : Heures convertie en décimale 
+- TIME_CAT : Matin,midi et soir
+
+'''
 #df.to_csv('Append_Time_cat_Road_Accident_Data.csv', index=False)
 
 
 
 #------------------------------------------------------------
-#Rajout partie Antoine 
+#2 - MODIFICATION VALEURS ORDINALES EN NUMERIQUE 
 
 #Code permettant de savoir combien de modalité "fatal" est présente dans le dataset
 def test_count_fatal():
@@ -182,12 +191,12 @@ df = df.dropna(subset=[TimeCat])
 df = df.drop(columns=['Carriageway_Hazards'])
 df = df.dropna()
 
+'''
 #------------------------------------------------------------------
 
 ####calcul de boxlpots a titre indicatif
 
 def test_calcul_boxplot():
-
 
 
     Q1_casualties = df['Number_of_Casualties'].quantile(0.25)
@@ -222,8 +231,9 @@ def test_calcul_boxplot():
 
     #print(lower_bound_latitude,Q1_latitude, Q3_latitude, upper_bound_latitude)
     #print(df['Latitude'].min(),df['Latitude'].max())
-
-### regroupement des valeurs aberrantes dans des catégories NaN aussi Autre 
+'''
+#--------------------------------------------------------------------------
+## 3 - regroupement des valeurs aberrantes dans des catégories NaN aussi Autre 
 
 treshold_casualties = 7 #seuil equivalent à minimum 0.1%
 
@@ -273,106 +283,73 @@ df['Vehicle_Type'] = df['Vehicle_Type'].replace(vehicle_mask)
 #print('Après changement')
 #print(df["Vehicle_Type"].unique()) #vérification bonne
 
+'''
+Voici ce que contient le fichier :"Output_Road_Accident_Data"
+
+1)  Ajouts de nouvelles colonnes (Enrichissement)
+- Region : Ajoutée via une jointure avec le fichier de correspondance (basée sur la force de police).
+- Num_Time : Heure de l'accident convertie en format numérique décimal (ex: 17.5 pour 17h30).
+- Time_cat : Catégorie temporelle (Morning, Daytime, Night).
+=> Ces 3 colonnes ont déjà été décrite au dessus et ce trouve dans le fichier : "Append_Time_cat_Road_Accident_Data"
+
+- Accident_Severity_NUMERIC : Score de gravité (0.3, 0.7 ou 1.0).
+- Light_Conditions_NUMERIC : Score de luminosité (0.3 à 1.0).
+- Road_Surface_Conditions_NUMERIC : Score d'adhérence de la route (0.2 à 1.0).
+- Time_cat_NUMERIC : Score basé sur la période de la journée (0.33, 0.66, 1.0).
+
+2) Nettoyage et Suppression (Filtrage)
+-Suppression des lignes vides (NaN) : Le code a supprimé toutes les lignes où il manquait des données dans les colonnes critiques (Road_Surface_Conditions, Time_cat, etc.).
+-Suppression de colonne : La colonne Carriageway_Hazards a été totalement retirée du dataset.
+-Filtrage des vitesses : Toutes les lignes où la vitesse autorisée (Speed_limit) était de 10 ou 15 ont été supprimées.
+
+3) Gestion des valeurs aberrantes (Outliers)
+- Plafonnement des victimes : Toutes les valeurs supérieures à 7 dans Number_of_Casualties ont été ramenées à 7.
+- Plafonnement des véhicules : Toutes les valeurs supérieures à 6 dans Number_of_Vehicles ont été ramenées à 6.
+
+4) Regroupement de catégories (Simplification)
+- Junction_Control : Les valeurs "Data missing or out of range" ont été renommées en "Not at junction or within 20 metres".
+- Vehicle_Type : Toutes les catégories rares (vélos, chevaux, minibus, engins agricoles, etc.) ont été regroupées sous le label "Other".
+
+5) Réorganisation
+- L'ordre des colonnes a été modifié : les colonnes numériques (_numeric) ont été insérées juste après leurs colonnes textuelles d'origine pour faciliter la lecture.
+'''
 
 # --- Sauvegarde du CSV final avec toutes les modifications ---
 df.to_csv('Output_Road_Accident_Data.csv', index=False)
 #print("\nFichier sauvegardé : Append_Time_cat_Road_Accident_Data.csv")
 
-#----------------------------------------------------------------
-#Création d'un échantillon équilibré à partir du dataset modifié
 
 
-# 1. Chargement des données
-file_path = 'Output_Road_Accident_Data.csv' 
-df = pd.read_csv(file_path)
 
-print(f"Nombre total de lignes chargées : {len(df)}")
+# --------------------------------------------------------------------------------------------------------
 
-# --- NETTOYAGE CIBLÉ ---
-# Liste des colonnes critiques qui ne DOIVENT PAS être vides
-colonnes_critiques = [
-    'Accident_Severity',      # Indispensable pour l'équilibrage
-    'Road_Surface_Conditions', 
-    'Road_Type', 
-    'Time', 
-    'Weather_Conditions'
+# 4. ÉCHANTILLONNAGE ÉQUILIBRÉ
+# On travaille directement sur le 'df' en mémoire, pas besoin de le recharger
+nbr_par_classe = 3000
+target = 'Accident_Severity'
 
-]
-
-# On supprime les lignes qui ont un "NaN" (vide) dans l'une de ces colonnes
-df_clean = df.dropna(subset=colonnes_critiques).copy()
-
-lignes_supprimees = len(df) - len(df_clean)
-print(f"Lignes supprimées (données manquantes dans les colonnes critiques) : {lignes_supprimees}")
-print(f"Lignes restantes pour l'échantillonnage : {len(df_clean)}")
-# -----------------------
-
-# 2. Configuration de l'échantillonnage
-nbr_echantillon_fatal = 3000
-target_col = 'Accident_Severity'
-total_target = 3 * nbr_echantillon_fatal 
-unique_classes = df_clean[target_col].nunique() 
-samples_per_class = total_target // unique_classes 
-
-print(f"\nCible par classe : {samples_per_class} enregistrements")
-
-# 3. Échantillonnage équilibré
-# On utilise df_clean (le dataset nettoyé)
-df_sample = df_clean.groupby(target_col, group_keys=False).apply(
-    lambda x: x.sample(n=min(len(x), samples_per_class), random_state=42)
+df_sample = df.groupby(target, group_keys=False).apply(
+    lambda x: x.sample(n=min(len(x), nbr_par_classe), random_state=42),
+    include_groups = False
 )
 
-# Mélange final
+# Mélange et sauvegarde de l'échantillon (Train Set)
 df_sample = df_sample.sample(frac=1, random_state=42).reset_index(drop=True)
-
-# 4. Résultats
-print("\n--- Répartition finale ---")
-print(df_sample[target_col].value_counts())
-print(f"Taille totale : {len(df_sample)}")
-
-# 5. Sauvegarde
-#Je n'ai pas activé la sauvegarde automatique pour éviter d'écraser des fichiers existants sans confirmation
-
-#output_name = f'sample_balanced_{len(df_sample)}.csv'
-#df_sample.to_csv(output_name, index=False)
-#print(f"Fichier '{output_name}' généré.")
+df_sample.to_csv('sample_balanced_9000.csv', index=False)
+print(f"Échantillon équilibré sauvegardé : {len(df_sample)} lignes")
 
 
 
 #----------------------------------------------
+
 #Création d'un nouveau fichier csv ne contenant pas les valeurs d'échantillonage équilibré de "sample_balanced_9000.csv"
 #Cela sera utile pour l'apprentissage par la suite. 
 
-# 1. Chargement
-df_full = pd.read_csv("Output_road_accident_data.csv")
-df_sample = pd.read_csv("sample_balanced_9000.csv")
 
-print("-------------------------")
-print("Suppression des lignes d'échantillonage équilibré du dataset complet")
-print(f"Total avant : {len(df_full)}")
-print(f"A retirer : {len(df_sample)}")
+# 6. CRÉATION DU TEST SET (Données restantes)
+# On utilise le merge avec indicateur pour trouver ce qui n'est pas dans l'échantillon
+df_test = df.merge(df_sample, how='left', indicator=True)
+df_test = df_test[df_test['_merge'] == 'left_only'].drop(columns=['_merge'])
 
-# 2. La méthode "Merge avec Indicateur"
-# On fusionne les deux tables sur TOUTES les colonnes pour trouver les lignes exactes
-# indicator=True crée une colonne '_merge' qui dit si la ligne est dans 'left_only', 'right_only' ou 'both'
-df_merged = df_full.merge(df_sample, how='left', indicator=True)
-
-# 3. On ne garde que ce qui est "left_only" (présent dans full, mais PAS dans sample)
-df_remaining = df_merged[df_merged['_merge'] == 'left_only']
-
-# On nettoie la colonne temporaire
-df_remaining = df_remaining.drop(columns=['_merge'])
-
-# 4. Vérification
-print(f"Reste : {len(df_remaining)}")
-diff = len(df_full) - len(df_remaining)
-print(f"Lignes supprimées réellement : {diff}")
-
-if diff == len(df_sample):
-    print("Le compte est bon ! Exactement 9000 lignes supprimées.")
-else:
-    print(f"Toujours une différence de {diff - len(df_sample)} lignes. (Peut être dû à des doublons parfaits dans les données brutes)")
-
-# 5. Sauvegarde
-df_remaining.to_csv("Output_road_accident_data_TEST_SET.csv", index=False)
-
+df_test.to_csv('Output_road_accident_data_TEST_SET.csv', index=False)
+print(f"Test set sauvegardé : {len(df_test)} lignes")
