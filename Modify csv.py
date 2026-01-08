@@ -233,7 +233,7 @@ def test_calcul_boxplot():
     #print(df['Latitude'].min(),df['Latitude'].max())
 '''
 #--------------------------------------------------------------------------
-## 3 - regroupement des valeurs aberrantes dans des catégories NaN aussi Autre 
+## 3 - regroupement des valeurs aberrantes dans des catégories NaN 
 
 treshold_casualties = 7 #seuil equivalent à minimum 0.1%
 
@@ -280,8 +280,30 @@ vehicle_mask ={ #seuil équivalent au fréquence inférieur à 1%
 
 df['Vehicle_Type'] = df['Vehicle_Type'].replace(vehicle_mask)
 
+
 #print('Après changement')
 #print(df["Vehicle_Type"].unique()) #vérification bonne
+
+
+
+# --------------------------------------------------------------------------------------------------------
+# 7 - NETTOYAGE FINAL DES JONCTIONS (Suppression des modalités minoritaires)
+
+# Suppression pour Junction_Control : Stop sign et Authorised person
+df = df[~df["Junction_Control"].isin(["Stop sign", "Authorised person"])]
+
+# Suppression pour Junction_Detail : Other junction, Slip road, More than 4 arms, et Mini-roundabout
+junction_detail_to_remove = [
+    "Other junction", 
+    "Slip road", 
+    "More than 4 arms (not roundabout)", 
+    "Mini-roundabout"
+]
+df = df[~df["Junction_Detail"].isin(junction_detail_to_remove)]
+
+print(f"Taille du dataset après nettoyage final des jonctions : {df.shape[0]} lignes")
+
+
 
 '''
 Voici ce que contient le fichier :"Output_Road_Accident_Data"
@@ -330,7 +352,7 @@ target = 'Accident_Severity'
 
 df_sample = df.groupby(target, group_keys=False).apply(
     lambda x: x.sample(n=min(len(x), nbr_par_classe), random_state=42),
-    include_groups = False
+    include_groups = True
 )
 
 # Mélange et sauvegarde de l'échantillon (Train Set)
