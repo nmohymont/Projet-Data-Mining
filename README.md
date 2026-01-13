@@ -1,5 +1,18 @@
 # Projet-Data-Mining
 
+La procédure complète pour récupérer la base de données et réalisées le prétraitement nécessite d'éxécuter :
+* ```import_dataset_road_accident.py``` pour récupérer la base de donnée
+* ```modify_csv.py``` pour réaliser le nettoyage des données brutes
+
+Pour faciliter l'utilisation de ce Github, l'ensemble des fichiers CSV nécessaire au fonctionne sont pré-installé lors du clonage. 
+
+Voici la liste des modifications réalisés pour les différents fichiers nettoyées :
+* 
+
+Ensuite un dossier ```MODEL & ASSESSMENT``` permet d'éxécuter les modèles d'apprentissage supervisé :
+* ```decision_tree_random_forest.py``` applique des modèles d'arbres de décisions, de forêt aléatoire et de _Gradient Boosting_ sur les données fortement déséquilibrées.
+* ```ajouter non du fichier réseau neurone.py```
+
 To use this code, we just need to have the file 'Road Accident Data.csv' and 'correspondance region et police_force.csv'.
 
 When launching the code, a 'Append_Time_cat_Road_Accident_Data.csv' file will be created with the changes.
