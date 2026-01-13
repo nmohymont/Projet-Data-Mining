@@ -1,4 +1,6 @@
-# Projet-Data-Mining
+# Analyse des facteurs d'accidents routier au Royaume Uni
+
+Ce projet s’inscrit dans une démarche d’analyse prédictive des accident routier en cherchant à classifier la gravité des accidents de la route au Royaume-Uni à partir d'une base de données Kaggle: intitulé _Road Accident Dataset_ et publié par l'utilisateur **Xavier Berge**. Le déséquilibrage massif des classes a introduit un défi technique que nous avons essayé de relever via les modèles mis en avant. 
 
 La procédure complète pour récupérer la base de données et réalisées le prétraitement nécessite d'éxécuter :
 * ```import_dataset_road_accident.py``` pour récupérer la base de donnée
