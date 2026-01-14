@@ -18,5 +18,5 @@ Voici la liste des modifications réalisés pour le fichier final nettoyé ```Ou
 Un second fichier ```sample_balanced_9000.csv``` a été généré pour appliquer la règle de *Undersampling* de la variable cible.
 
 Ensuite un dossier ```MODEL & ASSESSMENT``` permet d'éxécuter les modèles d'apprentissage supervisé :
-* ```decision_tree_random_forest.py``` applique des modèles d'arbres de décisions, de forêt aléatoire et de _Gradient Boosting_ sur les données fortement déséquilibrées.
-* ```ajouter non du fichier réseau neurone.py``` et résumer ce qu'il fait ==> ANTOINE
+* ```decision_tree_random_forest.ipynb``` applique des modèles d'arbres de décisions, de forêt aléatoire et de _Gradient Boosting_ sur les données fortement déséquilibrées.
+* ```Neural_Networks.ipynb```différents jeux de tests afin d'obtenir les combinaisons proposant les meilleurs solutions (présente dans la partie "Assessment"). 
