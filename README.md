@@ -8,19 +8,15 @@ La procédure complète pour récupérer la base de données et réalisées le p
 
 Pour faciliter l'utilisation de ce Github, l'ensemble des fichiers CSV nécessaire au fonctionne sont pré-installé lors du clonage. 
 
-Voici la liste des modifications réalisés pour les différents fichiers nettoyées :
-* 
+Voici la liste des modifications réalisés pour le fichier final nettoyé ```Output_Road_Accident_Data.csv``` :
+* filtrage des valeurs extrêmes
+* enrichissement de données par transformation de variable
+* encodage des variables ordinales au format numérique
+* discrétisation de la variable Time en 3 catégories Matin/Journée/Nuit
+* remplacement des valeurs manquantes
+
+Un second fichier ```sample_balanced_9000.csv`` a été généré pour appliquer la règle de *Undersampling* de la variable cible.
 
 Ensuite un dossier ```MODEL & ASSESSMENT``` permet d'éxécuter les modèles d'apprentissage supervisé :
 * ```decision_tree_random_forest.py``` applique des modèles d'arbres de décisions, de forêt aléatoire et de _Gradient Boosting_ sur les données fortement déséquilibrées.
-* ```ajouter non du fichier réseau neurone.py```
-
-To use this code, we just need to have the file 'Road Accident Data.csv' and 'correspondance region et police_force.csv'.
-
-When launching the code, a 'Append_Time_cat_Road_Accident_Data.csv' file will be created with the changes.
-
-The modifications are as follows:
-- Sort modalities of certain variables (elimination of exceptional values abérantes)
-- Transformations of ordinal variables into numerical variables (creation of new columns for them)
-- Creation of new categories (EX: the hour and classified according to the time of day morning/afternoon/evening) 
-- Box plot creation for information purposes 
+* ```ajouter non du fichier réseau neurone.py``` et résumer ce qu'il fait ==> ANTOINE
