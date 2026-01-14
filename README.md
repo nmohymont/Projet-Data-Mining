@@ -1,10 +1,6 @@
 # Analyse des facteurs d'accidents routier au Royaume Uni
 
-Auteurs : 
 
-MOHYMONT Nicolas : nicolas.mohymont@student.uclouvain.be
-
-VANABELLE Antoine : antoine.vanabelle@student.uclouvain.be
 
 
 Ce projet s’inscrit dans une démarche d’analyse prédictive des accident routier en cherchant à classifier la gravité des accidents de la route au Royaume-Uni à partir d'une base de données Kaggle: intitulé _Road Accident Dataset_ et publié par l'utilisateur **Xavier Berge**. Le déséquilibrage massif des classes a introduit un défi technique que nous avons essayé de relever via les modèles mis en avant. 
@@ -27,3 +23,10 @@ Un second fichier ```sample_balanced_9000.csv``` a été généré pour applique
 Ensuite un dossier ```MODEL & ASSESSMENT``` permet d'éxécuter les modèles d'apprentissage supervisé :
 * ```decision_tree_random_forest.ipynb``` applique des modèles d'arbres de décisions, de forêt aléatoire et de _Gradient Boosting_ sur les données fortement déséquilibrées.
 * ```Neural_Networks.ipynb```différents jeux de tests afin d'obtenir les combinaisons proposant les meilleurs solutions (présente dans la partie "Assessment"). 
+
+
+Auteurs : 
+
+MOHYMONT Nicolas : nicolas.mohymont@student.uclouvain.be
+
+VANABELLE Antoine : antoine.vanabelle@student.uclouvain.be
