@@ -22,7 +22,7 @@ Un second fichier ```sample_balanced_9000.csv``` a été généré pour applique
 
 Ensuite un dossier ```MODEL & ASSESSMENT``` permet d'éxécuter les modèles d'apprentissage supervisé :
 * ```decision_tree_random_forest.ipynb``` applique des modèles d'arbres de décisions, de forêt aléatoire et de _Gradient Boosting_ sur les données fortement déséquilibrées.
-* ```Neural_Networks.ipynb```différents jeux de tests afin d'obtenir les combinaisons proposant les meilleurs solutions (présente dans la partie "Assessment"). Les itérations exploratoires liées à la modification des hyperparamètres ne sont pas reproduites dans ce document.
+* ```Neural_Networks.ipynb``` différents jeux de tests afin d'obtenir les combinaisons proposant les meilleurs solutions (présente dans la partie "Assessment"). Les itérations exploratoires liées à la modification des paramètres ne sont pas reproduites dans ce document.
 
 
 Auteurs : 
